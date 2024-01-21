@@ -1,61 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bygg din egen by!</title>
+    <link rel="stylesheet" href="styling.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bygg din egen by!</title>
-  <link rel="stylesheet" href="styling.css" />
-</head>
-
-<body>
-  <!-- Du trenger hverken røre HTML-koden eller CSS-koden for å løse oppgavene.
+  <body>
+    <!-- Du trenger hverken røre HTML-koden eller CSS-koden for å løse oppgavene.
     1. Når brukeren trykker på et av bildene, skal hen bli trukket/gitt korrekt antall mynter. Lommeboken skal oppdateres både
     i koden og i nettleseren.
+
     2. Du skal skrive ut all kjøpshistorikk i en egen logg. Det skal lages nye li-tagger i JS, som skal legges til i 
     "shopping-list"-ul'en. 
+
     3. Taggene skal styles med grønn/gul/rød avhengig av om det er et salg, kjøp, eller ugjennomførbart kjøp.
     4. Brukeren skal få feilmelding om hen ikke har nok mynter. 
+
     5. Man blir tørst av å drive business! Den blå div-en "water-amount" symboliserer vannet i brønnen.
-    Hver gang et salg/kjøp er vellykket, skal innholdet i brønnen synke med 10. Hint: styling av height 
+    Hver gang et salg/kjøp er vellykket, skal innholdet i brønnen synke med 10. Hint: styling av height
+
     6. Man skal få en alert når brønnen er tom, da blir den automatisk fylt opp igjen. -->
-  <div class="main-container">
-    <div style="background: rgba(255, 255, 255, 0.662);">
-      <h1>Bygg din egen by!</h1>
 
-      <div style="font-weight: bold; display: flex; width: 750px; justify-content: space-between;">
-        <p>Selg en geit, få 100 mynter.</p>
-        <p>Ett hus koster 500 mynter</p>
-        <p>Ett slott koster 1000 mynter</p>
-      </div>
-      <!-- Bankkonto sin innerHTML skal bli overskrevet i JS. -->
-      <h2 id="bank-account" style="font-weight: bold;">
-        Du har 500 mynter på din konto.
-      </h2>
-    </div>
-    <div>
-      <img src="images/goat-png.png" id="goat-img" class="goat" />
-      <img src="images/house-png.png" id="house-img" class="house" />
-      <img src="images/castle.png" id="castle-img" class="castle" />
-      <div class="well-container">
-        <div class="water-container">
-          <!-- div'en "water-amount" må justeres for å endre vannmengde -->
-          <div id="water-amount" class=""></div>
+    <div class="main-container">
+      <div style="background: rgba(255, 255, 255, 0.662)">
+        <h1>Bygg din egen by!</h1>
+
+        <div
+          style="
+            font-weight: bold;
+            display: flex;
+            width: 750px;
+            justify-content: space-between;
+          "
+        >
+          <p>Selg en geit, få 100 mynter.</p>
+          <p>Ett hus koster 500 mynter</p>
+          <p>Ett slott koster 1000 mynter</p>
         </div>
-        <img src="images/well.png" id="well-img" class="well" />
+        <!-- Bankkonto sin innerHTML skal bli overskrevet i JS. -->
+        <h2 id="bank-account" style="font-weight: bold">
+          Du har 500 mynter på din konto.
+        </h2>
+      </div>
+      <div>
+        <img src="images/goat-png.png" id="goat-img" class="goat" />
+        <img src="images/house-png.png" id="house-img" class="house" />
+        <img src="images/castle.png" id="castle-img" class="castle" />
+        <div class="well-container">
+          <div class="water-container">
+            <!-- div'en "water-amount" må justeres for å endre vannmengde -->
+            <div id="water-amount" class=""></div>
+          </div>
+          <img src="images/well.png" id="well-img" class="well" />
+        </div>
       </div>
     </div>
+    <ul id="shopping-list"></ul>
+    <script>
+      let coins = 500;
+      let waterAmount = 200;
 
-  </div>
-  <ul id="shopping-list"></ul>
-  <script>
+      let shoppingLog = document.getElementById("shopping-list");
 
-    let coins = 500;
-    let waterAmount = 200;
+      let goatImg = document.getElementById("goat-img");
 
-    //Her kommer din kode!
-  </script>
-</body>
+      const bankAccount = document.getElementById("bank-account");
+      const houseImg = document.getElementById("house-img");
+      const castleImg = document.getElementById("castle-img");
 
+      //pixel går ned basert på wateramount = int
+      function UpdateWaterHeight(waterAmount) {
+        document.getElementById(
+          "water-amount"
+        ).style.height = `${waterAmount}px`;
+        alert("Nå går vannet nedover");
+        
+      }
+
+      function emptyWaterAlert(waterAmount) {
+        if (waterAmount <= 0) {
+          alert("Nå er brønnen tom, den skal fylles på");
+          waterAmount += 200;
+          UpdateWaterHeight(waterAmount);
+        }
+      }
+
+      goatImg.addEventListener("click", sellGoat);
+      function sellGoat() {
+        coins += 100;
+        waterAmount -= 10;
+        UpdateWaterHeight(waterAmount);
+        UpdateBankAccount();
+        emptyWaterAlert(waterAmount);
+        
+
+        //legger til salg av sau
+        createListSheepSale();
+      }
+
+      houseImg.addEventListener("click", buyHouse);
+      function buyHouse() {
+        if (coins >= 500) {
+          coins -= 500;
+          //waterAount Update med -10px
+          //legge til house i historikken -ShoppingCart
+          createListHouse();
+
+          waterAmount -= 10;
+          UpdateWaterHeight(waterAmount);
+
+          UpdateBankAccount();
+          emptyWaterAlert(waterAmount);
+        } else {
+          alert(`Du har ikke nok coins, Du har kun ${coins} på konto`);
+
+          const newTransactionFail = document.createElement("li");
+          newTransactionFail.innerHTML = "transaction failed to buy a house";
+          newTransactionFail.style.color = "red";
+          shoppingLog.appendChild(newTransactionFail);
+        }
+      }
+
+      castleImg.addEventListener("click", buyCastle);
+      function buyCastle() {
+        if (coins >= 1000) {
+          coins -= 1000;
+
+          createListCastle();
+
+          waterAmount -= 10;
+          UpdateWaterHeight(waterAmount);
+
+          UpdateBankAccount();
+          emptyWaterAlert(waterAmount);
+        } else {
+          alert(`Du har ikke nok coins, Du har kun ${coins} på konto`);
+          const newTransactionFail = document.createElement("li");
+          newTransactionFail.innerHTML = "transaction failed to buy a castle";
+          newTransactionFail.style.color = "red";
+          shoppingLog.appendChild(newTransactionFail);
+        }
+      }
+
+
+      //Oppdatere bankkonto
+      function UpdateBankAccount() {
+        bankAccount.innerHTML = `Du har ${coins} på din konto.`;
+      }
+      //lage lister basert på kjøp
+
+      function createListHouse() {
+        const newHouse = document.createElement("li");
+        newHouse.innerHTML = "House";
+        newHouse.style.color = "green";
+        shoppingLog.appendChild(newHouse);
+      }
+
+      function createListCastle() {
+        const newCastle = document.createElement("li");
+        newCastle.innerHTML = "Castle";
+        newCastle.style.color = "green";
+        shoppingLog.appendChild(newCastle);
+      }
+
+      function createListSheepSale() {
+        const newSheepSale = document.createElement("li");
+        newSheepSale.innerHTML = "sheep sale";
+        newSheepSale.style.color = "orange";
+        shoppingLog.appendChild(newSheepSale);
+        //li.id = "new-sheep-sale";
+      }
+      //Shopping historikk funksjon
+      console.log(shoppingLog);
+
+     
+    </script>
+  </body>
 </html>
